@@ -1,41 +1,71 @@
-import React from "react";
-import { useSelector, useDispatch } from "react-redux";
+// src/components/DataList.js
+import React, { useEffect } from "react";
+import { connect } from "react-redux";
 import {
-  selectTotalPages,
-  selectPageNumber,
-  setPageNumber,
-} from "../redux/beersSlice";
+  fetchDataStart,
+  fetchDataSuccess,
+  fetchDataFailure,
+  setPage,
+} from "../redux/dataSlice";
+import { fetchData } from "../redux/api";
 
-const Pagination = () => {
-  const dispatch = useDispatch();
-  const totalPages = useSelector(selectTotalPages);
-  const currentPage = useSelector(selectPageNumber);
+const Pagination = ({
+  items,
+  page,
+  pageSize,
+  isLoading,
+  error,
+  fetchDataStart,
+  fetchDataSuccess,
+  fetchDataFailure,
+  setPage,
+}) => {
+  useEffect(() => {
+    fetchDataStart();
 
-  const handlePageChange = (page) => {
-    dispatch(setPageNumber(page));
-  };
+    fetchData(page, pageSize)
+      .then((data) => fetchDataSuccess(data))
+      .catch((error) => fetchDataFailure(error));
+  }, [page, pageSize, fetchDataStart, fetchDataSuccess, fetchDataFailure]);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
 
   return (
-    <nav aria-label="Page navigation">
-      <ul className="pagination justify-content-center">
-        {Array.from({ length: totalPages }, (_, index) => index + 1).map(
-          (page) => (
-            <li
-              key={page}
-              className={`page-item ${currentPage === page ? "active" : ""}`}
-            >
-              <button
-                className="page-link"
-                onClick={() => handlePageChange(page)}
-              >
-                {page}
-              </button>
-            </li>
-          )
-        )}
+    <div>
+      <ul>
+        {items.map((item) => (
+          <li key={item.id}>{item.name}</li>
+        ))}
       </ul>
-    </nav>
+      <div>
+        <button onClick={() => setPage(page - 1)} disabled={page === 1}>
+          Previous
+        </button>
+        <button onClick={() => setPage(page + 1)}>Next</button>
+      </div>
+    </div>
   );
 };
 
-export default Pagination;
+const mapStateToProps = (state) => ({
+  items: state.data.items,
+  page: state.data.page,
+  pageSize: state.data.pageSize,
+  isLoading: state.data.isLoading,
+  error: state.data.error,
+});
+
+const mapDispatchToProps = {
+  fetchDataStart,
+  fetchDataSuccess,
+  fetchDataFailure,
+  setPage,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Pagination);

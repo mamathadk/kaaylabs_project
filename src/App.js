@@ -3,13 +3,19 @@ import React, { useEffect, useState } from "react";
 import { Provider, connect } from "react-redux";
 // import Pagination from "./components/Pagination";
 import Table from "./components/Table";
-// import Filters from "./components/Filters";
-import { FETCH_BEERS_SUCCESS, SET_FILTERS } from "./redux/beerSlice";
+import { FETCH_BEERS_SUCCESS } from "./redux/beerSlice";
 import Filters from "./components/Filters";
+import {
+  setFilterBrewedAfter,
+  setFilterBrewedBefore,
+} from "./redux/filterSlice";
+import Pagination from "./components/Pagination";
+import { fetchDataSuccess } from "./redux/dataSlice";
 
 const App = (props) => {
   const [usersData, setUsersData] = useState([]);
   const fetchdata = () => {
+    // fetch(`https://api.punkapi.com/v2/beers?page=${page}&per_page=${pageSize}`)
     fetch("https://api.punkapi.com/v2/beers")
       .then((res) => res.json())
       .then((fin) => setUsersData(fin))
@@ -20,16 +26,13 @@ const App = (props) => {
     props.beersDispatch();
   }, []);
 
-  // const filterData = () => {
-  //   props.filtersDisptch();
-  //   console.log(props);
-  // };
   return (
     <div className="App">
       <h1 className="text-center mt-4">Beer Table</h1>
+
       <Filters usersData={usersData} />
       <Table usersData={usersData} />
-      {/* <Pagination /> */}
+      {/* <Pagination items={usersData} /> */}
     </div>
   );
 };
@@ -40,7 +43,9 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     beersDispatch: (data) => dispatch(FETCH_BEERS_SUCCESS(data)),
-    filtersDisptch: (data) => dispatch(SET_FILTERS(data)),
+    filtersDisptchbrewedbefore: (data) => dispatch(setFilterBrewedBefore(data)),
+    filtersDisptchbrewedAfter: (data) => dispatch(setFilterBrewedAfter(data)),
+    fetchSuccesDispatch: (data) => dispatch(fetchDataSuccess(data)),
   };
 };
 

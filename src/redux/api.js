@@ -1,10 +1,14 @@
-import axios from "axios";
+//
 
-const BASE_URL = "https://api.punkapi.com/v2/beers";
-
-export const fetchBeers = async (page, perPage) => {
-  const response = await axios.get(
-    `${BASE_URL}?page=${page}&per_page=${perPage}`
-  );
-  return response.data;
-};
+export async function fetchData(page, pageSize) {
+  try {
+    const response = await fetch(
+      `https://api.punkapi.com/v2/beers?page=${page}&per_page=${pageSize}`
+    );
+    const data = await response.json();
+    console.log(data);
+    return data;
+  } catch (error) {
+    throw new Error("Failed to fetch data");
+  }
+}
