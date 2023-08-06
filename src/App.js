@@ -29,8 +29,7 @@ const App = (props) => {
   return (
     <div className="App">
       <h1 className="text-center mt-4">Beer Table</h1>
-
-      <Filters usersData={usersData} />
+      {/* <Filters usersData={usersData} /> */}
       <Table usersData={usersData} />
       {/* <Pagination items={usersData} /> */}
     </div>
