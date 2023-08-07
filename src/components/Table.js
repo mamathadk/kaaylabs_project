@@ -3,7 +3,9 @@ import { connect } from "react-redux";
 import { FETCH_BEERS_SUCCESS } from "../redux/beerSlice";
 import { Pagination } from "antd";
 import { Button, Table } from "antd";
-import { DatePicker, Space } from "antd";
+import DatePickers from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+// import { DatePicker, Space } from "antd";
 import "../App.css";
 
 const columns = [
@@ -52,8 +54,8 @@ const columns = [
     title: "First Brewed",
     dataIndex: "first_brewed",
     // width: '70%',
-    defaultSortOrder: "ascend",
-    sorter: (a, b) => a.first_brewed.localeCompare(b.first_brewed),
+    // defaultSortOrder: "ascend",
+    // sorter: (a, b) => a.first_brewed.localeCompare(b.first_brewed),
   },
   {
     title: "Food Pairing",
@@ -113,56 +115,86 @@ const onChange = (pagination, filters, sorter, extra) => {
 };
 
 const Tables = (props) => {
-  const [pickafterdate, setpickafterdate] = useState();
-  const [pickbeforedate, setpickbeforedate] = useState();
 
-  const beforedate = (date, dateString) => {
-    setpickbeforedate(dateString);
-    console.log("before", dateString);
-  };
-  const afterdate = (date, dateString) => {
-    setpickafterdate(dateString);
-    console.log("after", dateString);
-  };
-  //   const beers = useSelector((state) => state.beers.beers);
 
-  function filteritems() {
-    if (usersData.first_brewed === pickafterdate) {
-      // debugger
-      console.log(usersData.name);
-    } else if (usersData.first_brewed === pickbeforedate) {
-      // debugger
-      console.log(usersData.name);
-    }
-  }
   const { usersData } = props;
   console.log(usersData);
+
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+  const [filteredData, setFilteredData] = useState([]);
+
+  const handleStartDateChange = (date) => {
+    setStartDate(date);
+    filterDataByDateRange(date, endDate);
+  };
+
+  const handleEndDateChange = (date) => {
+    setEndDate(date);
+    console.log(date);
+    filterDataByDateRange(startDate, date);
+  };
+  const filterDataByDateRange = (startDate, endDate) => {
+    if (!startDate || !endDate) {
+      setFilteredData([]);
+      
+      return;
+    }
+    
+    const formattedStartDate = formatDate(startDate);
+    const formattedEndDate = formatDate(endDate);
+    
+    const filteredData = usersData.filter(
+      (item) => item.first_brewed >= formattedStartDate && item.first_brewed <= formattedEndDate
+      );
+      setFilteredData(filteredData);
+    };
+    debugger
+
+  const formatDate = (date) => {
+    return date.toISOString().split('T')[0];
+  };
   return (
     <div>
       <div className="filter">
         {/* <Space direction="horizontal"> */}
         <div className="">
           <label>Brewed Before : </label>
-          <DatePicker
-            style={{ marginLeft: "20px" }}
-            onChange={beforedate}
-            picker="month"
-          />
+          <DatePickers
+          id="startDatePicker"
+          selected={startDate}
+          onChange={handleStartDateChange}
+        />
         </div>
         <div className="">
           <label>Brewed After : </label>
-          <DatePicker
-            style={{ marginLeft: "20px" }}
-            onChange={afterdate}
-            picker="month"
-          />
+          <DatePickers
+          id="endDatePicker"
+          selected={endDate}
+          onChange={handleEndDateChange}
+        />
         </div>
         {/* </Space> */}
-        <Button type="primary" onClick={filteritems}>
+        {/* <Button type="primary" >
           Filter
-        </Button>
+        </Button> */}
       </div>
-      <Table columns={columns} dataSource={usersData} onChange={onChange} />
+      {/* <Table columns={columns} dataSource={usersData} onChange={onChange} /> */}
+
+
+      {filteredData.length > 0 ? 
+         <Table columns={columns} dataSource={filteredData} onChange={onChange} /> 
+      // (
+      //   filteredData.map((item) => (
+      //     <div key={item.id}>
+      //         ID: {item.id}, Date: {item.first_brewed}, Description: {item.description}
+      //       </div>
+      //     ))
+      //     ) 
+          : (
+           <Table columns={columns} dataSource={usersData} onChange={onChange} /> 
+          // <div>No data available for the selected date range.</div>
+        )}
     </div>
   );
 };
