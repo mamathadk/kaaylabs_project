@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { connect } from "react-redux";
 import { FETCH_BEERS_SUCCESS } from "../redux/beerSlice";
-import { Pagination } from "antd";
-import { Button, Table } from "antd";
-import DatePickers from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
+import { Table } from "antd";
+import DatePickers from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 // import { DatePicker, Space } from "antd";
 import "../App.css";
 
@@ -115,10 +114,7 @@ const onChange = (pagination, filters, sorter, extra) => {
 };
 
 const Tables = (props) => {
-
-
   const { usersData } = props;
-  console.log(usersData);
 
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
@@ -128,73 +124,62 @@ const Tables = (props) => {
     setStartDate(date);
     filterDataByDateRange(date, endDate);
   };
-
   const handleEndDateChange = (date) => {
     setEndDate(date);
-    console.log(date);
+    //console.log(date);
     filterDataByDateRange(startDate, date);
   };
+
   const filterDataByDateRange = (startDate, endDate) => {
     if (!startDate || !endDate) {
       setFilteredData([]);
-      
+
       return;
     }
-    
+
     const formattedStartDate = formatDate(startDate);
     const formattedEndDate = formatDate(endDate);
-    
     const filteredData = usersData.filter(
-      (item) => item.first_brewed >= formattedStartDate && item.first_brewed <= formattedEndDate
-      );
-      setFilteredData(filteredData);
-    };
-    debugger
+      (item) =>
+        item.first_brewed >= formattedStartDate &&
+        item.first_brewed <= formattedEndDate
+    );
+    setFilteredData(filteredData);
+  };
 
   const formatDate = (date) => {
-    return date.toISOString().split('T')[0];
+    return date.toISOString().split("T")[0];
   };
   return (
     <div>
       <div className="filter">
-        {/* <Space direction="horizontal"> */}
         <div className="">
           <label>Brewed Before : </label>
           <DatePickers
-          id="startDatePicker"
-          selected={startDate}
-          onChange={handleStartDateChange}
-        />
+            id="startDatePicker"
+            selected={startDate}
+            onChange={handleStartDateChange}
+          />
         </div>
         <div className="">
           <label>Brewed After : </label>
           <DatePickers
-          id="endDatePicker"
-          selected={endDate}
-          onChange={handleEndDateChange}
-        />
+            id="endDatePicker"
+            selected={endDate}
+            onChange={handleEndDateChange}
+          />
         </div>
-        {/* </Space> */}
-        {/* <Button type="primary" >
-          Filter
-        </Button> */}
       </div>
-      {/* <Table columns={columns} dataSource={usersData} onChange={onChange} /> */}
 
-
-      {filteredData.length > 0 ? 
-         <Table columns={columns} dataSource={filteredData} onChange={onChange} /> 
-      // (
-      //   filteredData.map((item) => (
-      //     <div key={item.id}>
-      //         ID: {item.id}, Date: {item.first_brewed}, Description: {item.description}
-      //       </div>
-      //     ))
-      //     ) 
-          : (
-           <Table columns={columns} dataSource={usersData} onChange={onChange} /> 
-          // <div>No data available for the selected date range.</div>
-        )}
+      {filteredData.length > 0 ? (
+        <Table
+          columns={columns}
+          dataSource={filteredData}
+          onChange={onChange}
+        />
+      ) : (
+        <Table columns={columns} dataSource={usersData} onChange={onChange} />
+      )}
     </div>
   );
 };

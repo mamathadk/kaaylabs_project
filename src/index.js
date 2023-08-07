@@ -8,7 +8,6 @@ import { configureStore } from "@reduxjs/toolkit";
 import { Provider } from "react-redux";
 import filterSlice from "./redux/filterSlice";
 import dataSlice from "./redux/dataSlice";
-import Pagination from "./components/Pagination";
 
 const store = configureStore({
   reducer: {

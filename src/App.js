@@ -1,15 +1,12 @@
 // src/App.js
 import React, { useEffect, useState } from "react";
-import { Provider, connect } from "react-redux";
-// import Pagination from "./components/Pagination";
+import { connect } from "react-redux";
 import Table from "./components/Table";
 import { FETCH_BEERS_SUCCESS } from "./redux/beerSlice";
-import Filters from "./components/Filters";
 import {
   setFilterBrewedAfter,
   setFilterBrewedBefore,
 } from "./redux/filterSlice";
-import Pagination from "./components/Pagination";
 import { fetchDataSuccess } from "./redux/dataSlice";
 
 const App = (props) => {
@@ -28,10 +25,8 @@ const App = (props) => {
 
   return (
     <div className="App">
-      <h1 className="text-center mt-4">Beer Table</h1>
-      {/* <Filters usersData={usersData} /> */}
+      <h1 className="text-center mt-4 mb-5">Beer Table</h1>
       <Table usersData={usersData} />
-      {/* <Pagination items={usersData} /> */}
     </div>
   );
 };
